@@ -1,20 +1,58 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ * @flow strict-local
+ */
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import 'react-native-gesture-handler';
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from "@react-navigation/stack";
+import * as Font from 'expo-font';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+// screens
+import {
+    OnBoarding,
+} from "./app/screens/";
+
+// screen for stack & tabs
+const Stack = createStackNavigator();
+const App = () => {
+
+    const [fontLoaded, setFontLoaded] = useState(false);
+
+    useEffect(() => {
+        // Load the custom font asynchronously
+        const loadFont = async () => {
+          await Font.loadAsync({
+            'Roboto-Regular': require('./app/assets/fonts/Roboto-Regular.ttf'),
+            'Roboto-Black': require('./app/assets/fonts/Roboto-Black.ttf'),
+            'Roboto-Bold': require('./app/assets/fonts/Roboto-Bold.ttf'),
+            // Add more custom fonts here if needed
+          });
+          setFontLoaded(true);
+        };
+    
+        loadFont();
+      }, []);
+
+      if (!fontLoaded) {
+        // Return a loading screen or null while the font is loading
+        return null;
+      }
+
+    return (
+        <NavigationContainer>
+            <Stack.Navigator>
+                {/* Onboarding screen */}
+                <Stack.Screen name="OnBoarding" component={OnBoarding} options={{ headerShown: false }} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+};
+
+export default () => {
+    return <App />;
+};
